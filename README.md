@@ -158,6 +158,27 @@ https://developer.android.com/studio/write/annotations.html#thread-annotations
 
 通过现象看本质，通过本质去处理现象，基础工程才是王道！
 
+## 2、简单粗暴的远程打卡
+
+你需要的有：
+
+1、公司里联网的主机
+
+2、一个usb连着主机的联网的平板
+
+3、平板上的打卡软件
+
+4、会一点adb命令/Windows主机的话可以使用第三方软件
+
+当然有更好的方案，欢迎各位各位吐槽！
+
+演示链接：
+
+链接: https://pan.baidu.com/s/1hNiAsBL77yJbdm7dQtP5Kw 提取码: dkn8 
+
+复制这段内容后打开百度网盘手机App，操作更方便哦
+
+
 
 
 
