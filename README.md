@@ -28,6 +28,15 @@
 
 ```
 这里，在相同的进程中运行 相同的线程 指的就是主线程，那么问题来了，组件是在哪个或者什么样的线程中运行？？？
+
+AMS是可以说是Android调度中心，管理四大组件，在SystemServer中启动
+
+services/java/com/android/server/SystemServer.java
+
+  // Set up the Application instance for the system process and get started.
+  mActivityManagerService.setSystemProcess();
+  
+  
 ```
 
 如果某个应用组件启动且该应用已存在进程（因为存在该应用的其他组件），则该组件会在此进程内启动并使用相同的执行线程。 但是，您可以安排应用中的其他组件在单独的进程中运行，并为任何进程创建额外的线程。
@@ -178,8 +187,19 @@ https://developer.android.com/studio/write/annotations.html#thread-annotations
 
 复制这段内容后打开百度网盘手机App，操作更方便哦
 
+## 3、root
 
+android apk的root权限和usb adb root 权限的区别
 
+usb adb 权限是指，当adb连接手机时，手机中的守护进程adbd的权限为root权限，从而他的子线程也具有root权限
+
+相当于 终端 sudo 和 su - 获取root权限
+
+apk 在已经root的情况下，通过
+
+Runtime.getRuntime().exec("su");
+
+可能获取不到权限，在此时需要平台对此的支持
 
 
 
