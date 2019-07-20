@@ -187,6 +187,10 @@ https://developer.android.com/studio/write/annotations.html#thread-annotations
 
 复制这段内容后打开百度网盘手机App，操作更方便哦
 
+//2019年07月20日09:53:15
+
+//已经找到非常好用的打卡方式，他解决的仅仅是定位，不过，对照片的水印啥的，这块我得琢磨琢磨
+
 ## 3、root
 
 android apk的root权限和usb adb root 权限的区别
@@ -201,17 +205,43 @@ Runtime.getRuntime().exec("su");
 
 可能获取不到权限，在此时需要平台对此的支持
 
+## 4、Instrumentation 模拟多点触碰
 
+想象一个应用场景，如果让跑在后台的A进程去发送点击事件去控制Android的滑动，点击或其他，这该怎么办？
 
+假设我方可以将apk放到system/app下，系统sign没有问题
 
+第一个方案，很简单，单点触碰，很简单，网上百度。
 
+第二个方案如果是多点触碰，一个手指在滑动，另一个手指在点击等等，这该怎么去实现，Google Android 多点触碰，顶多能搜到如何在当前进行进程多点触碰操作，他是写死的，没有如何用Instrumentation去模拟，这块根本没有。
 
+思路：和单点触碰比较多点触碰的本质也就是去发送事件，所以，他到最后也都是调用sendxxxSyncxxx，那么多点触碰的事件的逻辑怎么去组织，这点Google和百度都没有给我好的答案，我的解决思路是打log，从我的下游看他接收多点触碰的参数到底是什么，所以我在一个App里面去打了log，从log里面得到正确的处理逻辑，然后再到上游去组织代码，一次成功！
 
+其实代码还是很繁琐，不过他的逻辑性很强。
 
+所以多点触碰的逻辑是什么，我想用一段log回答
 
+```
+...
+07-18 19:01:04.710 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=49.43927, y[0]=29.641785, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=1, eventTime=13229031, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.725 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=50.072876, y[0]=30.854248, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=2, eventTime=13229047, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.745 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=48.577637, y[0]=30.844666, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=1, eventTime=13229064, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.760 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=49.994568, y[0]=32.010803, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=1, eventTime=13229081, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.775 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=51.2193, y[0]=32.22589, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=2, eventTime=13229097, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.795 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=51.46057, y[0]=32.424316, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=2, eventTime=13229114, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.810 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=51.4187, y[0]=34.5813, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=1, eventTime=13229131, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.825 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=50.224915, y[0]=34.700134, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=2, eventTime=13229148, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.835 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=48.0, y[0]=38.0, toolType[0]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=13229158, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.835 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_POINTER_DOWN(1), actionButton=0, id[0]=0, x[0]=48.0, y[0]=38.0, toolType[0]=TOOL_TYPE_FINGER, id[1]=1, x[1]=949.0, y[1]=31.0, toolType[1]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=2, historySize=0, eventTime=13229158, downTime=13218776, deviceId=2, source=0x1002 }
+07-18 19:01:04.860 26296-26296/com.iwant.screen D/MainActivity_:  MotionEvent { action=ACTION_MOVE, actionButton=0, id[0]=0, x[0]=51.31201, y[0]=35.791992, toolType[0]=TOOL_TYPE_FINGER, id[1]=1, x[1]=946.0, y[1]=34.104004, toolType[1]=TOOL_TYPE_FINGER, buttonState=0, metaState=0, flags=0x2, edgeFlags=0x0, pointerCount=2, historySize=2, eventTime=13229181, downTime=13218776, deviceId=2, source=0x1002 }
+...
+```
 
+感触还是有的：
 
+1、事件分发机制，就像我标题1写的那样，之前理解的到现在真的对吗？如果别人问我事件分发流程的话，我至少不会回答百度都能搜到的答案。
 
+2、解决思路，其实一开始是没有思路的，因为网上没有，搜不到，这个和我大部分的工作不一样，那怎么去解决，还是标题1的思路，通过现象看本质，再通过本质去解决问题。
 
 
 
