@@ -243,7 +243,20 @@ Runtime.getRuntime().exec("su");
 
 2、解决思路，其实一开始是没有思路的，因为网上没有，搜不到，这个和我大部分的工作不一样，那怎么去解决，还是标题1的思路，通过现象看本质，再通过本质去解决问题。
 
+## 5、apprtc搭建服务器第一坑
 
+```
+SyntaxError: Use of const in strict mode.
+Loading "eslint.js" tasks...ERROR
+SyntaxError: Use of const in strict mode.
+Loading "compress.js" tasks...ERROR
+SyntaxError: Use of const in strict mode.
+Warning: Task "shell:buildAppEnginePackage" not found. Use --force to continue.
+```
+
+sudo nmp install n -g
+
+sudo n stable
 
 ## 参考
 
