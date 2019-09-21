@@ -258,6 +258,17 @@ sudo nmp install n -g
 
 sudo n stable
 
+## 6、data 新建目录 大坑
+
+项目需求 需要把配置文件写到android /data/xxx/xxx.json，然后：
+
+1、用File mkdirs()xxxx 等均不行 只有在sdcard是可以的，需要系统签名的同时还需要在xml写入
+```
+android:sharedUserId="android.uid.system"
+```
+
+2、第一种是可行的，在此之前我用java运行cmd mkdir touch等 是可以创建的，但是往里面写入json文件的时候 用的是echo，“”空字符就格式化了，导致json格式错误
+
 ## 参考
 
 https://developer.android.com/guide/components/processes-and-threads.html
