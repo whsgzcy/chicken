@@ -1,4 +1,4 @@
-![MacDown Screenshot](https://github.com/whsgzcy/chicken/blob/master/imgae/android_start.png)
+![MacDown Screenshot](https://github.com/whsgzcy/chicken/blob/master/imgae/android_start_.png)
 
 ## 1、什么是进程 什么是线程
 
