@@ -269,6 +269,53 @@ android:sharedUserId="android.uid.system"
 
 2、第一种是可行的，在此之前我用java运行cmd mkdir touch等 是可以创建的，但是往里面写入json文件的时候 用的是echo，“”空字符就格式化了，导致json格式错误
 
+## 7、Android获取当前屏幕的变化
+
+项目需求 录屏的时候为wxh，当拉起竖屏apk时，屏幕方向发生变化，此时需要将录屏的w和h进行互换，那怎么才能监听的到呢？直接上代码：
+
+ps：网上一搜特么的一大堆，也是一标准坑
+
+```
+public class XXXervice extends Service {
+
+...
+    @Override
+    public void onCreate() {
+        super.onCreate();
+...
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int rotation = getCurrentRotation();
+        Log.d("ClearLogService", "onConfigurationChanged rotation=" + rotation + ", mRotation=" + mRotation);
+       ...
+
+    }
+
+    private int mVideoWidth, mVideoHeight, mRotation;
+    static int orientationFromRotation(int rotation) {
+        switch (rotation) {
+            case Surface.ROTATION_0:
+            case Surface.ROTATION_180:
+                return 0;
+            case Surface.ROTATION_90:
+            case Surface.ROTATION_270:
+                return 1;
+        }
+        return -1;
+    }
+
+    private int getCurrentRotation() {
+        WindowManager windowManager =
+                (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
+        return orientationFromRotation(windowManager.getDefaultDisplay().getRotation());
+    }
+
+}
+```
+
 ## 参考
 
 https://developer.android.com/guide/components/processes-and-threads.html
