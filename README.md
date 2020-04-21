@@ -338,6 +338,76 @@ public class XXXervice extends Service {
 
 我认为这样的逻辑，这样的认知 应该可以看透一些 华而不实的东西。
 
+## 9、Ubuntu安装vbox(VM)
+
+```
+注意，这个是个巨坑！！！
+
+现象，我们安装好vbox之后，再去安装虚拟机，Ubuntu或者Windows，会出现这样一个错，
+
+***************** ******************** ********************* ***************
+Kernel driver not installed (rc=-1908)
+
+The VirtualBox Linux kernel driver (vboxdrv) is either not loaded or there is a permission problem with /dev/vboxdrv.
+Please reinstall the kernel module by executing
+
+'/sbin/vboxconfig'
+
+as root
+
+where:sulibOslnit what:3
+
+xxxxx
+xxxxx
+**************** ******************** ********************** ***************
+
+这个，网上乱七八糟的东西一大堆，我想诺诺的问一句，你们自己验证过吗？
+
+我们从这个应用的log可以看出:
+
+***************** ******************** ********************* ***************
+vboxdrv:
+Running module version sanity check.
+ -Origin module
+  -No origin module exists within this kernel
+ -Installation
+  -Installation to /lib/modules/4.15.0-45-generic/updates/dkms
+
+vboxnetadp.ko:
+Running module version sanity check.
+ -Origin module
+  -No origin module exists within this kernel
+  -Installation
+   -Installation to /lib/modules/4.15.0-45-generic/updates/dkms
+
+vboxnetflt.ko:
+Running module version sanity check.
+ -Origin module
+  -No origin module exists within this kernel
+  -Installation
+  -Installation to /lib/modules/4.15.0-45-generic/updates/dkms
+
+vboxpci.ko:
+Running module version sanity check.
+ -Origin module
+  -No origin module exists within this kernel
+  -Installation
+  -Installation to /lib/modules/4.15.0-45-generic/updates/dkms
+
+  ...
+
+depmod.....
+
+DKMS: install completed.
+
+***************** ******************** ********************* ***************
+
+他明显就是缺少驱动啊，在Ubuntu下处理这个问题的最好方式是：
+
+sudo apt-get -y install virtualbox
+
+```
+
 ## 参考
 
 https://developer.android.com/guide/components/processes-and-threads.html
